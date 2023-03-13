@@ -32,7 +32,12 @@ const registerUser = asyncHandler( async (req, res) => {
     const user = await User.create({ username, email, password: hashedPassword});
 
     if(user) {
-        res.status(201).json(user);
+        res.status(201).json({
+            _id: user.id,
+            username: user.username,
+            email: user.email,
+            token: generateToken(user.id),
+        });
     } else {
         res.status(400);
         throw new Error("User creation failed");
@@ -58,26 +63,43 @@ const loginUser = asyncHandler( async (req, res) => {
         throw new Error("Please create an account");
     }
 
-    res.status(200).json(user);
+    // Match passwords
+    if (userExists && (await bcrypt.compare(password, userExists.password))){
+        res.status(201).json({
+            _id: userExists.id,
+            username: userExists.username,
+            email: userExists.email,
+            token: generateToken(userExists.id),
+        });
+    } else {
+        res.status(400);
+        throw new Error("Invalid creds");
+
+    }
+
 });
 
 // @desc    Get user data
 // @route   GET /api/users/me
-// @access  Public
+// @access  Private
 const getCurrentUser = asyncHandler( async (req, res) => {
-    if (!req.body.username || !req.body.email || !req.body.password){
-        res.status(400);
-        throw new Error("User creation failed, please fill all fields");
-    }
-    const user = await User.create({
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-    });
+    // res.status(200).json(req.user);
 
-    res.status(200).json(user);
+    const { _id, username, email } = await User.findById(req.user.id);
+
+    res.status(200).json({
+        id: _id,
+        username,
+        email
+    })
 });
 
+// Generate JWT
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '30d',
+    });
+};
 
 module.exports = {
     registerUser,
