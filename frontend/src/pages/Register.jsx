@@ -9,7 +9,12 @@ function Register() {
     password2: '',
   })
 
-  const onChange = () => {};
+  const onChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: [e.target.value]
+    }))
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
