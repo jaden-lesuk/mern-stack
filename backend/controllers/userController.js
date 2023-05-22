@@ -2,7 +2,6 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
-const { default: mongoose } = require("mongoose");
 
 // @desc    Register New User
 // @route   POST /api/users
@@ -51,6 +50,8 @@ const loginUser = asyncHandler( async (req, res) => {
 
     const {email, password} = req.body;
 
+    console.log(email, password);
+
     if (!email || !password){
         res.status(400);
         throw new Error("Please fill all fields to log in");
@@ -83,15 +84,15 @@ const loginUser = asyncHandler( async (req, res) => {
 // @route   GET /api/users/me
 // @access  Private
 const getCurrentUser = asyncHandler( async (req, res) => {
-    // res.status(200).json(req.user);
+    res.status(200).json(req.user);
 
-    const { _id, username, email } = await User.findById(req.user.id);
+    // const { _id, username, email } = await User.findById(req.user.id);
 
-    res.status(200).json({
-        id: _id,
-        username,
-        email
-    })
+    // res.status(200).json({
+    //     id: _id,
+    //     username,
+    //     email
+    // })
 });
 
 // Generate JWT

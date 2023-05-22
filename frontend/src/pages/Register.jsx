@@ -14,6 +14,8 @@ function Register() {
     password2: '',
   })
 
+  const { username, email, password, password2 } = formData;
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -26,7 +28,7 @@ function Register() {
       // toast.error(message)
       console.log(message);
     }
-    if (isSuccess || user) {
+    if (user) {
       navigate('/')
     }
 
@@ -42,26 +44,26 @@ function Register() {
   };
 
   const onSubmit = (e) => {
+    // Form input returned as array istead of text???
     e.preventDefault();
 
-    console.log(password, password2);
+    // wtf?
+    console.log(password[0], password2[0], username[0], email[0]);
 
-    if(password === password2){
+    if(password[0] !== password2[0]){
       // toast.error('passwords do not match')
       console.log('passwords do not match')
     } else {
       const userData = {
-        username, 
-        email, 
-        password
+        username: username[0], 
+        email: email[0], 
+        password: password[0]
       }
 
       dispatch(register(userData))
     }
 
   };
-
-  const { username, email, password, password2 } = formData;
 
   if(isLoading) {
     return <Spinner/>

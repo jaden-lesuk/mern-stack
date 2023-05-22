@@ -25,7 +25,7 @@ function Login() {
       // toast.error(message)
       console.log(message);
     }
-    if (isSuccess || user) {
+    if (user) {
       navigate('/')
     }
 
@@ -43,8 +43,11 @@ function Login() {
   const onSubmit = (e) => {
     e.preventDefault();
 
+    console.log(password[0], email[0]);
+
     const userData = {
-      email, password
+      email: email[0], 
+      password: password[0]
     }
 
     dispatch(login(userData))
